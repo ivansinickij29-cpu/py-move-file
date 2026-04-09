@@ -16,12 +16,9 @@ def move_file(command: str) -> None:
         target = os.path.join(dest, os.path.basename(source))
     else:
         target = dest
-
     if os.path.abspath(source) == os.path.abspath(target):
         return
-
     target_dir = os.path.dirname(target)
-
     if target_dir:
         if os.path.exists(target_dir):
             if not os.path.isdir(target_dir):
@@ -29,19 +26,13 @@ def move_file(command: str) -> None:
                     f"Cannot create directory '{target_dir}': File exists"
                 )
         else:
-
             os.makedirs(target_dir)
     if os.path.isfile(target):
         os.remove(target)
-
-    try:
-        os.rename(source, target)
-    except OSError:
-        with open(source, "rb") as src, open(target, "wb") as dst:
-            while True:
-                chunk = src.read(1024 * 1024)
-                if not chunk:
-                    break
-                dst.write(chunk)
-
-        os.remove(source)
+    with open(source, "rb") as src, open(target, "wb") as dst:
+        while True:
+            chunk = src.read(1024 * 1024)
+            if not chunk:
+                break
+            dst.write(chunk)
+    os.remove(source)
